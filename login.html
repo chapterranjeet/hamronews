@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login — HamroNews</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Nepali&family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --crimson: #C0272D; --ink: #1A1A1A; --paper: #FAF7F2;
+      --border: #DDD8CE; --gold: #D4A017;
+      --font-ui: 'Inter', system-ui, sans-serif;
+      --font-np: 'Tiro Devanagari Nepali', serif;
+      --font-d:  'Playfair Display', serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-ui);
+      background: var(--ink);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      position: relative; overflow: hidden;
+    }
+    body::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: 
+        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px),
+        repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px);
+      pointer-events: none;
+    }
+    .login-wrap {
+      width: 100%; max-width: 420px;
+      animation: fade-in 0.5s ease;
+    }
+    @keyframes fade-in { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform:none; } }
+    .login-logo {
+      text-align: center; margin-bottom: 32px;
+    }
+    .login-logo .logo-np { font-family: var(--font-np); font-size: 40px; color: var(--crimson); font-weight: 700; }
+    .login-logo .logo-en { font-family: var(--font-d); font-size: 36px; color: #fff; letter-spacing: -1px; }
+    .login-logo .tagline { display: block; font-size: 11px; color: #666; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+    .login-card {
+      background: #fff; border-radius: 10px;
+      padding: 36px 32px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      border-top: 3px solid var(--crimson);
+    }
+    .login-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: var(--ink); }
+    .login-card .sub { font-size: 13px; color: #888; margin-bottom: 28px; }
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 6px; letter-spacing: 0.3px; }
+    .form-control {
+      width: 100%; padding: 11px 14px;
+      font-size: 14px; font-family: var(--font-ui);
+      border: 1px solid var(--border); border-radius: 6px;
+      background: #FAFAF8; color: var(--ink);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-control:focus { outline:none; border-color: var(--crimson); box-shadow: 0 0 0 3px rgba(192,39,45,0.12); background:#fff; }
+    .btn-login {
+      width: 100%; padding: 12px;
+      background: var(--crimson); color: #fff;
+      font-size: 14px; font-weight: 700;
+      border: none; border-radius: 6px; cursor: pointer;
+      font-family: var(--font-ui); letter-spacing: 0.5px;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+    .btn-login:hover { background: #8B1A1D; }
+    .btn-login:active { transform: scale(0.98); }
+    .error-msg {
+      background: #FEE2E2; color: #991B1B;
+      padding: 10px 14px; border-radius: 6px;
+      font-size: 13px; margin-bottom: 16px;
+      display: none; border: 1px solid #FECACA;
+    }
+    .error-msg.show { display: block; }
+    .login-hint {
+      text-align: center; margin-top: 16px;
+      font-size: 12px; color: #aaa;
+    }
+    .back-link { display: block; text-align:center; margin-top:20px; font-size:13px; color:#666; text-decoration:none; transition:color 0.2s; }
+    .back-link:hover { color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-logo">
+      <span class="logo-np">हाम्रो</span><span class="logo-en">NEWS</span>
+      <span class="tagline">Admin Portal</span>
+    </div>
+    <div class="login-card">
+      <h2>Welcome Back</h2>
+      <p class="sub">Sign in to manage news content</p>
+
+      <div class="error-msg" id="error-msg">Invalid username or password. Please try again.</div>
+
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <input class="form-control" type="text" id="username" placeholder="Enter username" autocomplete="username"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-control" type="password" id="password" placeholder="Enter password" autocomplete="current-password"/>
+      </div>
+      <button class="btn-login" id="btn-login">Sign In →</button>
+      <p class="login-hint">Managed By Ranjeet Yadav</p>
+    </div>
+    <a href="../index.html" class="back-link">← Back to HamroNews</a>
+  </div>
+
+  <script src="../js/db.js"></script>
+  <script>
+    // Redirect if already logged in
+    if (HamroDB.isLoggedIn()) window.location.href = 'dashboard.html';
+
+    const btn = document.getElementById('btn-login');
+    const errEl = document.getElementById('error-msg');
+
+    function doLogin() {
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value;
+      errEl.classList.remove('show');
+      if (!u || !p) { errEl.textContent = 'Please enter both username and password.'; errEl.classList.add('show'); return; }
+      if (HamroDB.login(u, p)) {
+        btn.textContent = '✓ Redirecting...';
+        setTimeout(() => window.location.href = 'dashboard.html', 400);
+      } else {
+        errEl.textContent = 'Invalid username or password. Please try again.';
+        errEl.classList.add('show');
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
+      }
+    }
+
+    btn.addEventListener('click', doLogin);
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  </script>
+</body>
+</html>

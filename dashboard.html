@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard — HamroNews</title>
+  <link rel="stylesheet" href="../css/admin.css"/>
+</head>
+<body>
+
+<div class="admin-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-np">हाम्रो</span><span class="logo-en">NEWS</span>
+      <span class="admin-badge">Admin Panel</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <div class="sidebar-nav-item active" data-panel="dashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="sidebar-nav-item" data-panel="all-news">
+        <span class="nav-icon">📰</span> All News
+      </div>
+      <div class="sidebar-nav-item" data-panel="new-post">
+        <span class="nav-icon">✏️</span> New Post
+      </div>
+      <div class="nav-section-label" style="margin-top:12px;">Settings</div>
+      <div class="sidebar-nav-item" data-panel="settings">
+        <span class="nav-icon">⚙️</span> Settings
+      </div>
+      <a href="../index.html" target="_blank" class="sidebar-nav-item" style="color:#888;">
+        <span class="nav-icon">🌐</span> View Site
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar" id="admin-avatar">A</div>
+        <div>
+          <div style="font-size:13px;color:#ddd;font-weight:600;" id="admin-name">Admin</div>
+          <div style="font-size:11px;color:#666;">Administrator</div>
+        </div>
+      </div>
+      <button class="btn-logout" id="btn-logout">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+    <!-- TOP BAR -->
+    <div class="admin-topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="topbar-new-btn" onclick="switchPanel('new-post')">+ New Post</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="admin-content">
+
+      <!-- ── DASHBOARD PANEL ── -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent News</span>
+            <button class="btn btn-secondary btn-sm" onclick="switchPanel('all-news')">View All</button>
+          </div>
+          <div class="card-body">
+            <table id="recent-table">
+              <thead><tr>
+                <th>Title</th><th>Category</th><th>Status</th><th>Date</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="recent-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ALL NEWS PANEL ── -->
+      <div class="panel" id="panel-all-news">
+        <div class="toolbar">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Search news..." />
+          </div>
+          <select class="filter-select" id="filter-cat">
+            <option value="">All Categories</option>
+            <option>राजनीति</option><option>अर्थ</option>
+            <option>खेलकुद</option><option>प्रविधि</option>
+            <option>मनोरञ्जन</option><option>स्वास्थ्य</option>
+          </select>
+          <select class="filter-select" id="filter-status">
+            <option value="">All Status</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+          <button class="btn btn-primary" onclick="switchPanel('new-post')">+ New Post</button>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">All Articles</span>
+            <span style="font-size:12px;color:#888;" id="news-count"></span>
+          </div>
+          <div class="card-body">
+            <table>
+              <thead><tr>
+                <th>Title</th><th>Category</th><th>Author</th><th>Status</th><th>Date</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="all-news-tbody"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+
+      <!-- ── NEW / EDIT POST PANEL ── -->
+      <div class="panel" id="panel-new-post">
+        <form id="post-form" onsubmit="return false;">
+          <input type="hidden" id="edit-id" />
+          <div class="form-grid">
+            <!-- LEFT -->
+            <div>
+              <div class="form-section">
+                <div class="form-section-title">Article Content</div>
+                <div class="form-group">
+                  <label class="form-label" for="f-title">Title (शीर्षक) <span class="req">*</span></label>
+                  <input class="form-control" type="text" id="f-title" placeholder="समाचारको शीर्षक लेख्नुहोस्..." />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="f-excerpt">Excerpt (संक्षेप) <span class="req">*</span></label>
+                  <textarea class="form-control" id="f-excerpt" rows="3" placeholder="छोटो परिचय लेख्नुहोस्..."></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="f-body">Body (मुख्य समाचार) <span class="req">*</span></label>
+                  <textarea class="form-control" id="f-body" rows="10" placeholder="पूर्ण समाचार लेख्नुहोस्..."></textarea>
+                </div>
+              </div>
+            </div>
+            <!-- RIGHT -->
+            <div>
+              <div class="form-section">
+                <div class="form-section-title">Publish Settings</div>
+                <div class="form-group">
+                  <label class="form-label" for="f-category">Category (श्रेणी) <span class="req">*</span></label>
+                  <select class="form-control" id="f-category">
+                    <option value="">-- Select Category --</option>
+                    <option>राजनीति</option><option>अर्थ</option>
+                    <option>खेलकुद</option><option>प्रविधि</option>
+                    <option>मनोरञ्जन</option><option>स्वास्थ्य</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="f-author">Author (लेखक)</label>
+                  <input class="form-control" type="text" id="f-author" placeholder="Author name" />
+                </div>
+                <label class="form-check">
+                  <input type="checkbox" id="f-published" checked/>
+                  <label for="f-published">Publish immediately</label>
+                </label>
+                <label class="form-check">
+                  <input type="checkbox" id="f-breaking"/>
+                  <label for="f-breaking">Mark as Breaking News 🔴</label>
+                </label>
+              </div>
+              <div class="form-section">
+                <div class="form-section-title">Featured Image</div>
+                <div class="form-group">
+                  <label class="form-label" for="f-image">Image URL</label>
+                  <input class="form-control" type="url" id="f-image" placeholder="https://..." />
+                  <div class="form-hint">Paste a direct image URL</div>
+                </div>
+                <div class="img-preview-box" id="img-preview-box" onclick="document.getElementById('f-image').focus()">
+                  <img id="img-preview" src="" alt="Preview"/>
+                  <div class="placeholder-text" id="img-placeholder">📷 Image preview will appear here</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn btn-primary" id="btn-save-publish" onclick="savePost(true)">✓ Save & Publish</button>
+                <button class="btn btn-secondary" onclick="savePost(false)">Save as Draft</button>
+                <button class="btn btn-secondary" onclick="resetForm()">✕ Cancel</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- ── SETTINGS PANEL ── -->
+      <div class="panel" id="panel-settings">
+        <div class="form-section" style="max-width:480px;">
+          <div class="form-section-title">Change Admin Password</div>
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input class="form-control" type="password" id="s-cur-pass" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input class="form-control" type="password" id="s-new-pass" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input class="form-control" type="password" id="s-conf-pass" />
+          </div>
+          <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </main>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <h3>Delete Article?</h3>
+    <p>This action cannot be undone. The article will be permanently removed.</p>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="../js/db.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>
